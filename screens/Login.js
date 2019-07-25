@@ -27,6 +27,9 @@ export default class Login extends Component {
 
     this.setState({ loading: true });
 
+    //only for demostration
+    //it breaks keyboard event :(
+    //setTimeout(() => {
     //check with backend API or with some static data
     if (email !== VALID_EMAIL) {
       errors.push('email');
@@ -40,6 +43,10 @@ export default class Login extends Component {
     if (!errors.length) {
       navigation.navigate("Browse");
     }
+
+    //}, 2000);
+
+
   }
 
   render() {
@@ -53,6 +60,7 @@ export default class Login extends Component {
           <Block middle>
             <Input
               label="Email"
+              error={hasErrors('email')}
               style={[styles.input, hasErrors('email')]}
               defaultValue={this.state.email}
               onChangeText={text => this.setState({ email: text })}
@@ -60,6 +68,7 @@ export default class Login extends Component {
             <Input
               secure
               label="Password"
+              error={hasErrors('email')}
               style={[styles.input, hasErrors('password')]}
               defaultValue={this.state.password}
               onChangeText={text => this.setState({ password: text })}
@@ -71,7 +80,7 @@ export default class Login extends Component {
 
             </Button>
 
-            <Button onPress={() => { }}>
+            <Button onPress={() => navigation.navigate('Forgot')}>
               <Text gray caption center style={{ textDecorationLine: 'underline' }}>Forgot your password?</Text>
             </Button>
 
