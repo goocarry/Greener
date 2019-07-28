@@ -12,8 +12,8 @@ const VALID_PASSWORD = "123456";
 export default class Login extends Component {
 
   state = {
-    email: '',
-    password: '',
+    email: VALID_EMAIL,
+    password: VALID_PASSWORD,
     errors: [],
     loading: false,
   }

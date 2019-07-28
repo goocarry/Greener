@@ -1,23 +1,63 @@
 import React, { Component } from 'react';
-import { StyleSheet, Image, ScrollView } from 'react-native';
+import { StyleSheet, Image, ScrollView, TextInput } from 'react-native';
 import Slider from 'react-native-slider';
 
-import { Block, Button, Text, Divider } from '../components';
+import { Block, Button, Text, Divider, Switch } from '../components';
 import { theme, mocks } from '../constants';
 
 class Settings extends Component {
   state = {
     budget: 850,
     monthly: 1700,
+    notifications: true,
+    newsletter: false,
+    editing: null,
+    profile: {},
   }
+
+  componentDidMount() {
+    this.setState({ profile: this.props.profile });
+  }
+
+  handleEdit(name, text) {
+    const { profile } = this.state;
+    profile[name] = text;
+
+    this.setState({ profile });
+  }
+
+  toggleEdit(name) {
+    const { editing } = this.state;
+    this.setState({ editing: !editing ? name : null });
+  }
+
+
+  renderEdit(name) {
+    const { profile, editing } = this.state;
+
+    if (editing === name) {
+      return (
+        <TextInput
+          defaultValue={profile[name]}
+          onChangeText={text => this.handleEdit([name], text)}
+        >
+        </TextInput>
+      )
+    }
+
+    return <Text bold>{profile[name]}</Text>
+  }
+
+
+
   render() {
-    const { profile, navigation } = this.props;
+    const { profile, editing } = this.state;
 
     return (
       <Block>
         <Block flex={false} row center space="between" style={styles.header}>
           <Text h1 bold> Settings </Text>
-          <Button onPress={() => navigation.navigate('Settings')}>
+          <Button>
             <Image
               source={profile.avatar}
               style={styles.avatar}
@@ -29,37 +69,34 @@ class Settings extends Component {
             <Block row space="between" margin={[10, 0]} style={styles.inputRow}>
               <Block>
                 <Text gray2 style={{ marginBottom: 10 }}>Username</Text>
-                <Text bold>goocarry</Text>
+                {this.renderEdit('username')}
               </Block>
-              <Text medium secondary>
-                Edit
+              <Text medium secondary onPress={() => this.toggleEdit('username')}>
+                {editing === 'username' ? 'Save' : 'Edit'}
               </Text>
             </Block>
             <Block row space="between" margin={[10, 0]} style={styles.inputRow}>
               <Block>
                 <Text gray2 style={{ marginBottom: 10 }}>Location</Text>
-                <Text bold>Yakutsk</Text>
+                {this.renderEdit('location')}
               </Block>
-              <Text medium secondary>
-                Edit
+              <Text medium secondary onPress={() => this.toggleEdit('location')}>
+                {editing === 'location' ? 'Save' : 'Edit'}
               </Text>
             </Block>
             <Block row space="between" margin={[10, 0]} style={styles.inputRow}>
               <Block>
                 <Text gray2 style={{ marginBottom: 10 }}>E-mail</Text>
-                <Text bold>goocarry@gmail.com</Text>
+                <Text bold>{profile.email}</Text>
               </Block>
-              <Text medium secondary>
-                Edit
-              </Text>
             </Block>
           </Block>
 
-          <Divider />
+          <Divider margin={[theme.sizes.base, theme.sizes.base * 2]} />
 
           <Block style={styles.sliders}>
-            <Block>
-              <Text gray2>Budget</Text>
+            <Block margin={[10, 0]}>
+              <Text gray2 style={{ marginBottom: 10 }}>Budget</Text>
               <Slider
                 minimumValue={0}
                 maximumValue={1000}
@@ -71,14 +108,14 @@ class Settings extends Component {
                 value={this.state.budget}
                 onValueChange={value => this.setState({ budget: value })}
               />
-              <Text caption gray2 right>$1,000</Text>
+              <Text caption gray right>$1,000</Text>
             </Block>
 
-            <Block>
-              <Text gray2>Monthly Cap</Text>
+            <Block margin={[10, 0]}>
+              <Text gray2 style={{ marginBottom: 10 }}>Monthly Cap</Text>
               <Slider
                 minimumValue={0}
-                maximumValue={1000}
+                maximumValue={5000}
                 style={{ height: 10 }}
                 thumbStyle={styles.thumb}
                 trackStyle={{ height: 6, borderRadius: 6 }}
@@ -87,11 +124,31 @@ class Settings extends Component {
                 value={this.state.monthly}
                 onValueChange={value => this.setState({ monthly: value })}
               />
-              <Text caption gray2 right>$5,000</Text>
+              <Text caption gray right>$5,000</Text>
             </Block>
           </Block>
 
           <Divider />
+
+          <Block style={styles.toggles}>
+            <Block row center space="between" style={{ marginBottom: theme.sizes.base * 2 }}>
+              <Text gray2 >Notifications</Text>
+              <Switch
+                value={this.state.notifications}
+                onValueChange={value => this.setState({ notifications: value })}
+              >
+              </Switch>
+            </Block>
+
+            <Block row center space="between" style={{ marginBottom: theme.sizes.base * 2 }}>
+              <Text gray2 >Newsletter</Text>
+              <Switch
+                value={this.state.newsletter}
+                onValueChange={value => this.setState({ newsletter: value })}
+              >
+              </Switch>
+            </Block>
+          </Block>
 
         </ScrollView>
       </Block>
@@ -131,5 +188,9 @@ const styles = StyleSheet.create({
     borderColor: 'white',
     borderWidth: 3,
     backgroundColor: theme.colors.secondary,
+  },
+  toggles: {
+    marginTop: theme.sizes.base * 0.7,
+    paddingHorizontal: theme.sizes.base * 2,
   }
 })

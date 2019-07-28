@@ -1,15 +1,29 @@
 import React, { Component } from 'react';
-import { StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
 
 import { Block, Button, Text, Card, Badge } from '../components';
 import { theme, mocks } from '../constants';
-import { ScrollView } from 'react-native-gesture-handler';
+
 
 
 class Browse extends Component {
 
   state = {
-    active: 'Products'
+    active: 'Products',
+    categories: [],
+  }
+
+  componentDidMount() {
+    this.setState({ categories: this.props.categories });
+  }
+
+  handleTab = tab => {
+    const { categories } = this.props;
+    const filtered = categories.filter(
+      category => category.tags.includes(tab.toLowerCase())
+    );
+
+    this.setState({ active: tab, categories: filtered });
   }
 
 
@@ -20,7 +34,7 @@ class Browse extends Component {
     return (
       <TouchableOpacity
         key={`tab-${tab}`}
-        onPress={() => this.setState({ active: tab })}
+        onPress={() => this.handleTab(tab)}
         style={[
           styles.tab,
           isActive ? styles.active : null,
@@ -35,7 +49,8 @@ class Browse extends Component {
 
 
   render() {
-    const { categories, profile, navigation } = this.props;
+    const { profile, navigation } = this.props;
+    const { categories } = this.state;
     const tabs = ['Products', 'Inspirations', 'Shop'];
 
     return (
@@ -121,4 +136,3 @@ const styles = StyleSheet.create({
     marginBottom: theme.sizes.base * 3.5,
   }
 })
- 
